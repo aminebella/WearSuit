@@ -1,19 +1,34 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\SuitController;
+use App\Http\Controllers\SuitImageController;
+use App\Http\Controllers\RentalController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+Route::post('/register', [AuthController::class, 'register']);   // open to public
+Route::post('/login', [AuthController::class, 'login']);         // open to public
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Protected routes
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    // Admin-only routes
+    Route::middleware('is_admin')->group(function () {
+
+        // Create a user manually (admin creates accounts for clients)
+        // Route::post('/users', [UserController::class, 'store']);
+
+        Route::resource('/suits', SuitController::class);
+        Route::post('/suits/{id}/images', [SuitImageController::class, 'store']);
+
+        Route::resource('/rentals', RentalController::class);
+    });
+
+    // Accessible by admin + normal users
+    Route::get('/suits', [SuitController::class, 'index']);
+    Route::get('/suit/{id}', [SuitController::class, 'show']);
+
+    // logout
+    Route::post('/logout', [AuthController::class, 'logout']);
 });

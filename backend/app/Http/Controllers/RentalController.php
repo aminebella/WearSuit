@@ -12,7 +12,7 @@ class RentalController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(["message" => "List of rentals"]);
     }
 
     /**
@@ -20,7 +20,7 @@ class RentalController extends Controller
      */
     public function create()
     {
-        //
+        return response()->json(["message" => "Rental created"]);
     }
 
     /**
@@ -28,7 +28,7 @@ class RentalController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return response()->json(["message" => "Rental stored"]);
     }
 
     /**
@@ -36,7 +36,7 @@ class RentalController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return response()->json(["message" => "Rental detail: $id"]);
     }
 
     /**
@@ -44,7 +44,7 @@ class RentalController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return response()->json(["message" => "Rental edited: $id"]);
     }
 
     /**
@@ -52,7 +52,7 @@ class RentalController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        return response()->json(["message" => "Rental updated: $id"]);
     }
 
     /**
@@ -60,6 +60,6 @@ class RentalController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        return response()->json(["message" => "Rental deleted: $id"]);
     }
 }

@@ -29,7 +29,7 @@ class SuitImageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return response()->json(["message" => "Image added to suit $id"]);
     }
 
     /**

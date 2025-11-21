@@ -12,7 +12,10 @@ class SuitFactory extends Factory
             'name' => "Suit " . fake()->unique()->numberBetween(1, 100),
             'description' => fake()->sentence(12),
             'size' => fake()->randomElement(['S', 'M', 'L', 'XL']),
-            'price_per_day' => fake()->numberBetween(50, 200),
+            'color' => fake()->randomElement(['white','black','red','yellow','green','purple','orange','gray']),
+            'gender' => fake()->randomElement(['men', 'women', 'girls','boys']),
+            'category' => fake()->randomElement(["wedding", "traditional", "party", "formal", "other"]),
+            'price_per_day' => fake()->numberBetween(80, 1000),
             'status' => fake()->randomElement(['available', 'unavailable', 'rented']),
         ];
     }
