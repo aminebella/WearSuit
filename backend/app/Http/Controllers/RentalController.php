@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Rental;
+use App\Models\User;
+use App\Models\Suit;
 
 class RentalController extends Controller
 {
@@ -12,7 +15,9 @@ class RentalController extends Controller
      */
     public function index()
     {
-        return response()->json(["message" => "List of rentals"]);
+        $rentals = Rental::with(["user","suit"])->get(); // return list
+
+        return response()->json($rentals, 200); // OR return ["rentals"=>$rentals]
     }
 
     /**
