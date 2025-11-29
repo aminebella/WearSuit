@@ -11,60 +11,83 @@ use App\Models\Suit;
 class RentalController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the rentals.
      */
     public function index()
     {
-        $rentals = Rental::with(["user","suit"])->get(); // return list
-
-        return response()->json($rentals, 200); // OR return ["rentals"=>$rentals]
+        // Récupère toutes les locations avec relations user et suit
+        $rentals = Rental::with(['user', 'suit'])->get();
+        return response()->json($rentals, 200);
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return response()->json(["message" => "Rental created"]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Store a newly created rental in storage.
      */
     public function store(Request $request)
     {
-        return response()->json(["message" => "Rental stored"]);
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'suit_id' => 'required|integer|exists:suits,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'return_date' => 'nullable|date|after_or_equal:start_date',
+            'status' => 'required|string|max:50',
+            'notes' => 'nullable|string',
+            'total_price' => 'required|numeric|min:0',
+            'payment_status' => 'required|string|max:50',
+        ]);
+
+        $rental = Rental::create($request->all());
+
+        return response()->json([
+            'message' => 'Rental created successfully',
+            'data' => $rental
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified rental.
      */
-    public function show(string $id)
+    public function show(Rental $rental)
     {
-        return response()->json(["message" => "Rental detail: $id"]);
+        $rental->load(['user', 'suit']);
+        return response()->json($rental, 200);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified rental in storage.
      */
-    public function edit(string $id)
+    public function update(Request $request, Rental $rental)
     {
-        return response()->json(["message" => "Rental edited: $id"]);
+        $request->validate([
+            'user_id' => 'sometimes|integer|exists:users,id',
+            'suit_id' => 'sometimes|integer|exists:suits,id',
+            'start_date' => 'sometimes|date',
+            'end_date' => 'sometimes|date|after_or_equal:start_date',
+            'return_date' => 'nullable|date|after_or_equal:start_date',
+            'status' => 'sometimes|string|max:50',
+            'notes' => 'nullable|string',
+            'total_price' => 'sometimes|numeric|min:0',
+            'payment_status' => 'sometimes|string|max:50',
+        ]);
+
+        $rental->update($request->all());
+
+        return response()->json([
+            'message' => 'Rental updated successfully',
+            'data' => $rental
+        ], 200);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified rental from storage.
      */
-    public function update(Request $request, string $id)
+    public function destroy(Rental $rental)
     {
-        return response()->json(["message" => "Rental updated: $id"]);
-    }
+        $rental->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        return response()->json(["message" => "Rental deleted: $id"]);
+        return response()->json([
+            'message' => 'Rental deleted successfully'
+        ], 200);
     }
 }

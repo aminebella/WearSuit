@@ -27,9 +27,36 @@ class SuitImageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, $id)
     {
-        return response()->json(["message" => "Image added to suit $id"]);
+        // Vérifie que le costume existe
+        $suit = Suit::findOrFail($id);
+
+        // Validation
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // max 5MB
+            'sort_order' => 'nullable|integer',
+        ]);
+
+        // Upload de l'image
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('suits', 'public'); // stockage dans storage/app/public/suits
+        } else {
+            return response()->json(['message' => 'No image uploaded'], 400);
+        }
+
+        // Création de l'enregistrement
+        $image = SuitImage::create([
+            'suit_id' => $suit->id,
+            'image_path' => $path, // chemin relatif
+            'sort_order' => $request->sort_order ?? 0,
+        ]);
+
+        return response()->json([
+            'message' => "Image added to suit {$suit->id}",
+            'data' => $image,
+            'url' => asset("storage/$path") // URL publique
+        ], 201);
     }
 
     /**
