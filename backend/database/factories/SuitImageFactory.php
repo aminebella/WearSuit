@@ -3,21 +3,26 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use \App\Models\Suit;
+use App\Models\Suit;
 
 class SuitImageFactory extends Factory
 {
-
     public function definition(): array
     {
-        $path_asstes= "C:/Users/Admin/Documents/DevWork/EMSI/4thYear/DevMobile/Project/Devloppement/earSuit/backend/public/assets/";
+        $suitsFolderPath = public_path('suits');
+        $suitImages = [
+            '\suit1.jpg',
+            '\suit2.jpg', 
+            '\suit3.jpg',
+            '\suit4.jpg',
+            '\suit5.jpg',
+            '\suit6.jpg',
+        ];
         
         return [
             'suit_id' => Suit::factory(),
-            'image_path' => $path_asstes . fake()->randomElement([
-                'suit1.jpg', 'suit2.jpg', 'suit3.jpg', 'suit4.jpg'
-            ]),
-            'sort_order' => fake()->numberBetween(0, 3),
+            'image_path' => $suitsFolderPath.fake()->randomElement($suitImages),
+            'sort_order' => fake()->numberBetween(0, 5),
         ];
     }
 }

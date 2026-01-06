@@ -6,57 +6,75 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Rental;
+use App\Models\User;
+use App\Models\Suit;
 use Faker\Factory as Faker;
 
 class RentalSeeder extends Seeder
 {
     public function run(): void
     {
+        $admin = User::where('role', 'admin')->first();
+        $client = User::where('role', 'user')->first();
+        $suit = Suit::first();
+
+        if (!$admin || !$client || !$suit) {
+            $this->command->warn('Missing required data. Please run UserSeeder and SuitSeeder first.');
+            return;
+        }
+
+        // Create a specific rental
+        $start = now()->subDays(10);
+        $days = 5; // 5 days rental
+        $totalPrice = $days * $suit->price_per_day;
 
         Rental::create([
-            'user_id' => 2, // éviter admin (id=1)
-            'suit_id' => 1,
-            'start_date' => "2025-10-10",
-            'end_date' => "2025-10-20",
-            'return_date' => "2025-10-20",
+            'admin_id' => $admin->id,
+            'user_id' => $client->id,
+            'suit_id' => $suit->id,
+            'start_date' => $start,
+            'total_price' => $totalPrice,
             'status' => 'completed',
-            'notes' => 'very good client , the suit is still looking good , defently rent him again',
-            'total_price' => 5000.0,
+            'notes' => 'Excellent client, suit returned in perfect condition.',
             'payment_status' => 'paid',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        $status = ["active", "completed", "cancelled"];
-        $payment_status = ["unpaid", "paid", "refunded"];
+        // Generate additional rentals
+        $statuses = ['active', 'completed', 'cancelled'];
+        $payment_statuses = ['unpaid', 'paid', 'refunded'];
         $faker = Faker::create();
 
-        // seeders
-        for ($i = 1; $i <= 10; $i++) {
-            $start = now()->subDays(rand(1, 10));
-            $end = (clone $start)->addDays(rand(1, 15));
+        $suits = Suit::where('is_active', true)->get();
+        $clients = User::where('role', 'user')->get();
+        $admins = User::where('role', 'admin')->get();
 
-            // Récupérer prix
-            $suit = DB::table('suits')->find($i);
-            $days = $start->diffInDays($end);
-            $total = $days * $suit->price_per_day;
+        for ($i = 1; $i <= 15; $i++) {
+            $start = now()->subDays(rand(1, 20));
+            
+            $selectedSuit = $suits->random();
+            $selectedClient = $clients->random();
+            $selectedAdmin = $admins->random();
+
+            $days = rand(1, 10);
+            $total = $days * $selectedSuit->price_per_day;
 
             Rental::create([
-                'suit_id' => $i,
-                'user_id' => rand(2, 6), // éviter admin (id=1)
+                'admin_id' => $selectedAdmin->id,
+                'user_id' => $selectedClient->id,
+                'suit_id' => $selectedSuit->id,
                 'start_date' => $start,
-                'end_date' => $end,
-                'return_date' => $end,
-                'status' => $status[array_rand($status)],
-                'notes' => $faker->sentence(12),
                 'total_price' => $total,
-                'payment_status' => $payment_status[array_rand($payment_status)],
+                'status' => $statuses[array_rand($statuses)],
+                'payment_status' => $payment_statuses[array_rand($payment_statuses)],
+                'notes' => $faker->sentence(12),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
         }
 
-        // Factory
-        // Rental::factory(10)->create();
+        // Generate additional random rentals using factory
+        Rental::factory(25)->create();
     }
 }

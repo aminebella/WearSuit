@@ -15,19 +15,50 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
+        'shop_name',
+        'city',
         'address',
         'phone',
         'email',
         'password',
         'role'
     ];
+    
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 
     protected $hidden = [
         'password',
     ];
 
-    public function rentals()
+    // Relationships
+    // Client's rentals
+    public function clientRentals()
     {
-        return $this->hasMany(Rental::class);
+        return $this->hasMany(Rental::class, 'user_id');
+    }
+
+    // Admin's rentals (rentals they've created)
+    public function managedRentals()
+    {
+        return $this->hasMany(Rental::class, 'admin_id');
+    }
+    
+    // Admin's suits (suits they've created)
+    public function suits()
+    {
+        return $this->hasMany(Suit::class, 'admin_id');
+    }
+    
+    // Helper methods
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isClient(): bool
+    {
+        return $this->role === 'user';
     }
 }

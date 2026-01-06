@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 
 class UserFactory extends Factory
 {
-
     protected static ?string $password;
 
     public function definition(): array
@@ -16,15 +15,33 @@ class UserFactory extends Factory
         return [
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
-
-            'address' => fake()->address,
-            'phone' => fake()->e164PhoneNumber,
-
+            'shop_name' => fake()->company(),
+            'city' => fake()->city(),
+            'address' => fake()->address(),
+            'phone' => fake()->e164PhoneNumber(),
             'email' => fake()->unique()->safeEmail(),
-            'password' => bcrypt('password'),
-            // 'remember_token' => Str::random(10),
+            'password' => static::$password ??= Hash::make('password'),
             'role' => fake()->randomElement(['admin', 'user']),
         ];
     }
 
+    /**
+     * Create an admin user.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
+        ]);
+    }
+
+    /**
+     * Create a regular user.
+     */
+    public function user(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'user',
+        ]);
+    }
 }

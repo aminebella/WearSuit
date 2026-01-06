@@ -15,11 +15,13 @@ class UserSeeder extends Seeder
         // Admin
         User::create([
             'first_name' => 'Admin',
-            'last_name' => 'Admin',
-            'address' => 'Admin',
+            'last_name' => 'User',
+            'shop_name' => 'Elite Suits Boutique',
+            'city' => 'Casablanca',
+            'address' => '123 Admin Street, Casablanca',
             'phone' => '+212 600102030',
-            'email' => 'Admin@Admin.com',
-            'password' => Hash::make('Admin'),
+            'email' => 'admin@wearsuit.com',
+            'password' => Hash::make('password'),
             'role' => 'admin',
             'created_at' => now(),
             'updated_at' => now(),
@@ -28,31 +30,53 @@ class UserSeeder extends Seeder
         // First User
         User::create([
             'first_name' => 'Amine',
-            'last_name' => 'Amine',
-            'address' => 'Azli',
+            'last_name' => 'Bella',
+            'shop_name' => null,
+            'city' => 'Rabat',
+            'address' => '456 Client Avenue, Rabat',
             'phone' => '+212 620202020',
-            'email' => 'Amine@Amine.com',
-            'password' => Hash::make('Amine'),
+            'email' => 'amine@wearsuit.com',
+            'password' => Hash::make('password'),
             'role' => 'user',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        for($i = 1; $i <= 5; $i++){
-        User::create([
+        // Additional Admins
+        for($i = 1; $i <= 3; $i++){
+            User::create([
+                'first_name' => "Admin$i",
+                'last_name' => "Shop$i",
+                'shop_name' => "Premium Suits Shop $i",
+                'city' => 'Marrakech',
+                'address' => "Shop $i Address, Marrakech",
+                'phone' => "+212 63030303$i",
+                'email' => "admin$i@wearsuit.com",
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Additional Users
+        for($i = 2; $i <= 10; $i++){
+            User::create([
                 'first_name' => "User$i",
                 'last_name' => "Client$i",
-                'address' => "Address$i",
-                'phone' => "+212 62020202$i",
-                'email' => "user$i@gmail.com",
-                'password' => Hash::make('user'),
+                'shop_name' => null,
+                'city' => 'Tangier',
+                'address' => "Address $i, Tangier",
+                'phone' => "+212 64040404$i",
+                'email' => "user$i@wearsuit.com",
+                'password' => Hash::make('password'),
                 'role' => 'user',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
         }
 
-        // Users
-        // User::factory(10)->create();
+        // Generate additional random users using factory
+        User::factory(20)->create();
     }
 }

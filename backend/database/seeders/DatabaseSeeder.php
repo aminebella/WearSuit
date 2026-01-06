@@ -6,7 +6,7 @@ use Database\Seeders\UserSeeder;
 use Database\Seeders\SuitSeeder;
 use Database\Seeders\SuitImageSeeder;
 use Database\Seeders\RentalSeeder;
-
+use Database\Seeders\RentalDaySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,13 +17,7 @@ class DatabaseSeeder extends Seeder
             SuitSeeder::class,
             SuitImageSeeder::class,
             RentalSeeder::class,
+            RentalDaySeeder::class,
         ]);
-
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }

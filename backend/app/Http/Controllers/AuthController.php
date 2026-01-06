@@ -16,21 +16,25 @@ class AuthController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
+            'shop_name' => 'nullable|string|max:150|required_if:role,admin',
+            'city' => 'required|string|max:100',
             'address' => 'nullable|string|max:255',
             'phone' => 'required|string|max:20|unique:users,phone',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:5|max:255',
-            // 'role' => 'required|string|in:admin,user',
+            'role' => 'required|string|in:admin,user',
         ]);
 
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
+            'shop_name' => $request->shop_name,
+            'city' => $request->city,
             'address' => $request->address,
             'phone' => $request->phone,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user',    // default role
+            'role' => $request->role,    // default role
         ]);
 
         return response()->json([
